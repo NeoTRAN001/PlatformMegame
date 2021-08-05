@@ -7,6 +7,7 @@ public class PlayerController : MonoBehaviour
     public PlayerMovement playerMovement;
     public float horizantalInput = 0f;
     public float speed = 10f;
+    public bool isAlive = true;
 
     void Start()
     {
@@ -15,16 +16,21 @@ public class PlayerController : MonoBehaviour
 
     void Update()
     {
-        BasicMovement();
+        if(isAlive) BasicMovement();
     }
 
     void FixedUpdate() {
-        playerMovement.Move(horizantalInput * speed * Time.deltaTime);
+        if(isAlive) playerMovement.Move(horizantalInput * speed * Time.deltaTime);
     }
 
     void OnTriggerEnter2D(Collider2D other) {
         if(other.gameObject.tag == "Cherry")
             HandlerItem(other.gameObject.tag, other);
+    }
+
+    void OnCollisionEnter2D(Collision2D other) {
+        if(other.gameObject.tag == "Spikes")
+            HandlerEnemy(other.gameObject.tag, other);
     }
 
     private void BasicMovement() {
@@ -34,5 +40,9 @@ public class PlayerController : MonoBehaviour
 
     private void HandlerItem(string itemName, Collider2D other) {
         Destroy(other.gameObject);
+    }
+
+    private void HandlerEnemy(string itemName, Collision2D other) {
+        isAlive = false;
     }
 }
